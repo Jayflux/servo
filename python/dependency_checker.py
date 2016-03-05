@@ -12,7 +12,7 @@ class Dependency_Checker:
 	def __init__(self, dir):
 		self.compiled_dependencies_list = []
 		self.cargo_dependencies = []
-		self.extern_crate_declerations = []
+		self.extern_crate_declarations = []
 		self.plugins = []
 		self.dir = dir
 		
@@ -67,8 +67,8 @@ class Dependency_Checker:
 		# extern crates are a bit more complicated because they could have aliases, so we need to reduce most of them down to a string
 		# but leave the alias ones as a tuple
 		if (found_extrn):
-			found_extrn = map(self.filter_externs, found_extrn)
-			self.extern_crate_declerations = list(set(found_extrn + self.extern_crate_declerations))
+			found_extrn = list(map(self.filter_externs, found_extrn))
+			self.extern_crate_declarations = list(set(found_extrn + self.extern_crate_declarations))
 
 		if (found_plugin):
 			self.plugins = list(set(found_plugin + self.plugins))
@@ -106,8 +106,8 @@ class Dependency_Checker:
 
 
 	def check_cargo_against_extern_crates(self, cargo_dep):
-		extern_crate_declerations_and_plugins = self.extern_crate_declerations + self.plugins
-		for extern in extern_crate_declerations_and_plugins:
+		extern_crate_declarations_and_plugins = self.extern_crate_declarations + self.plugins
+		for extern in extern_crate_declarations_and_plugins:
 			extern_value = extern if type(extern) is not tuple else extern[0]
 			if cargo_dep == extern_value:
 				return True
@@ -123,7 +123,7 @@ class Dependency_Checker:
 				self.error = True
 
 		print('\nChecking extern_crates against use statement\n')
-		for extern in self.extern_crate_declerations:
+		for extern in self.extern_crate_declarations:
 			extern = extern if type(extern) is not tuple else extern[1]
 			if (extern) not in self.compiled_dependencies_list:
 				print('Error ' + extern + ' not being used!') 
